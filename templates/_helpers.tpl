@@ -78,6 +78,18 @@ app: "{{ template "harbor.name" . }}"
   {{- end -}}
 {{- end -}}
 
+{{- define "harbor.adminSecretName" -}}
+  {{- if .Values.harborAdminExistingSecret -}}
+    {{- .Values.harborAdminExistingSecret -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "harbor.adminSecretKey" -}}
+  {{- if .Values.harborAdminExistingSecretKey -}}
+    {{- .Values.harborAdminExistingSecretKey -}}
+  {{- end -}}
+{{- end -}}
+
 {{- define "harbor.database.rawPassword" -}}
   {{- if eq .Values.database.type "internal" -}}
     {{- .Values.database.internal.password -}}

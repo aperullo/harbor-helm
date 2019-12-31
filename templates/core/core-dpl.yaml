@@ -62,6 +62,13 @@ spec:
               secretKeyRef:
                 name: "{{ template "harbor.jobservice" . }}"
                 key: secret
+          {{- if .Values.harborAdminExistingSecret }}
+          - name: HARBOR_ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "{{ template "harbor.adminSecretName" . }}"
+                key: "{{ template "harbor.adminSecretKey" . }}"
+          {{- end }}
         ports:
         - containerPort: 8080
         volumeMounts:
