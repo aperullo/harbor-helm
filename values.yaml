@@ -256,7 +256,12 @@ updateStrategy:
 logLevel: info
 
 # The initial password of Harbor admin. Change it from portal after launching Harbor
+# Applicable only if harborAdminExistingSecret is not set
 harborAdminPassword: "Harbor12345"
+# Or specify the name and key of an existing secret to use for the initial password instead.
+harborAdminExistingSecret: ""
+harborAdminExistingSecretKey: ""
+
 # The secret key used for encryption. Must be a string of 16 chars.
 secretKey: "not-a-secure-key"
 

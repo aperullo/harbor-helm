@@ -36,13 +36,13 @@ spec:
         imagePullPolicy: {{ .Values.imagePullPolicy }}
         livenessProbe:
           httpGet:
-            path: /api/v2.0/ping
+            path: /api/ping
             port: 8080
           initialDelaySeconds: {{ .Values.core.livenessProbe.initialDelaySeconds }}
           periodSeconds: 10
         readinessProbe:
           httpGet:
-            path: /api/v2.0/ping
+            path: /api/ping
             port: 8080
           initialDelaySeconds: 20
           periodSeconds: 10
@@ -62,6 +62,13 @@ spec:
               secretKeyRef:
                 name: "{{ template "harbor.jobservice" . }}"
                 key: JOBSERVICE_SECRET
+          {{- if .Values.harborAdminExistingSecret }}
+          - name: HARBOR_ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "{{ template "harbor.adminSecretName" . }}"
+                key: "{{ template "harbor.adminSecretKey" . }}"
+          {{- end }}
         ports:
         - containerPort: 8080
         volumeMounts:
