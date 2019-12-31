@@ -104,11 +104,19 @@ spec:
             - key: app.conf
               path: app.conf
       - name: secret-key
+        {{- if .Values.secretKeyExistingSecret }}
+        secret:
+          secretName: {{ template "harbor.secretKeyExistingSecretName" . }}
+          items:
+            - key: {{ template "harbor.secretKeyExistingSecretKey" . }}
+              path: key
+        {{- else }}
         secret:
           secretName: {{ template "harbor.core" . }}
           items:
             - key: secretKey
               path: key
+        {{- end }}
       - name: token-service-private-key
         secret:
           {{- if .Values.core.secretName }}
