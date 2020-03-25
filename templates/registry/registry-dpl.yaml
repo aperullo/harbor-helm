@@ -60,6 +60,15 @@ spec:
         envFrom:
         - secretRef:
             name: "{{ template "harbor.registry" . }}"
+        env:
+        {{- if has "registry" .Values.proxy.components }}
+        - name: HTTP_PROXY
+          value: "{{ .Values.proxy.httpProxy }}"
+        - name: HTTPS_PROXY
+          value: "{{ .Values.proxy.httpsProxy }}"
+        - name: NO_PROXY
+          value: "{{ template "harbor.noProxy" . }}"
+        {{- end }}
         ports:
         - containerPort: 5000
         - containerPort: 5001
@@ -70,6 +79,9 @@ spec:
         - name: registry-root-certificate
           mountPath: /etc/registry/root.crt
           subPath: tls.crt
+        - name: registry-htpasswd
+          mountPath: /etc/registry/passwd
+          subPath: passwd
         - name: registry-config
           mountPath: /etc/registry/config.yml
           subPath: config.yml
@@ -123,7 +135,7 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: {{ template "harbor.jobservice" . }}
-                key: secret
+                key: JOBSERVICE_SECRET
         ports:
         - containerPort: 8080
         volumeMounts:
@@ -147,6 +159,12 @@ spec:
           subPath: gcs-key.json
         {{- end }}
       volumes:
+      - name: registry-htpasswd
+        secret:
+          secretName: {{ template "harbor.registry" . }}
+          items:
+            - key: REGISTRY_HTPASSWD
+              path: passwd
       - name: registry-root-certificate
         secret:
           {{- if .Values.core.secretName }}
